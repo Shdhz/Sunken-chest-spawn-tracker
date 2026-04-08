@@ -18,6 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const realWorldTimeInfo = document.getElementById("realWorldTimeInfo");
 
   const serverNameInput = document.getElementById("serverNameInput");
+  const serverLinkInput = document.getElementById("serverLinkInput"); // BARU
   const saveLogBtn = document.getElementById("saveLogBtn");
   const logContainer = document.getElementById("logContainer");
   const logCountEl = document.getElementById("logCount");
@@ -201,10 +202,29 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Log Management
+  // Log Management
   function saveToLog() {
     if (!currentActiveData) return;
     const serverName =
       serverNameInput.value.trim() || `Server ${savedServers.length + 1}`;
+    const serverLink = serverLinkInput.value.trim();
+
+    // --- UPDATE FITUR VALIDASI: Pengecualian Untuk RoPro ---
+    if (serverLink) {
+      const isHttp = serverLink.startsWith("http");
+      const isRoPro = serverLink.includes("ropro.io");
+      const isFullJobId = serverLink.length >= 30;
+
+      // Jika BUKAN link web, BUKAN link RoPro, DAN kurang dari 30 karakter (Short ID salah)
+      if (!isHttp && !isRoPro && !isFullJobId) {
+        alert(
+          "⚠️ PERINGATAN FORMAT ID!\n\n" +
+            "Input terlalu pendek. Gunakan Full Job ID, Full Link, atau Link Invite RoPro (ropro.io/...).",
+        );
+        return;
+      }
+    }
+    // --------------------------------------------------------
 
     const newLog = {
       id: Date.now(),
@@ -213,6 +233,7 @@ document.addEventListener("DOMContentLoaded", () => {
       calculationTimestamp: currentActiveData.calculationTimestamp,
       uptimeText: currentActiveData.uptimeText,
       realWorldTime: currentActiveData.realWorldTime,
+      link: serverLink,
       alertSpawnPlayed: false,
     };
 
@@ -221,6 +242,7 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("sunkenServers", JSON.stringify(savedServers));
 
     serverNameInput.value = "";
+    serverLinkInput.value = "";
     renderLogs();
   }
 
@@ -245,6 +267,24 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     savedServers.forEach((server) => {
+      // --- LOGIKA SMART LINK PARSER (UPDATE ROPRO) ---
+      let joinHtml = "";
+      if (server.link) {
+        let finalUrl = server.link;
+
+        if (finalUrl.includes("ropro.io")) {
+          // Jika itu link RoPro tapi user lupa mengetik https://, kita tambahkan otomatis
+          if (!finalUrl.startsWith("http")) {
+            finalUrl = "https://" + finalUrl;
+          }
+        } else if (!finalUrl.startsWith("http")) {
+          // Jika itu murni kumpulan angka/huruf panjang (Job ID)
+          finalUrl = `https://www.roblox.com/games/start?placeId=16732694052&gameId=${finalUrl}`;
+        }
+
+        joinHtml = `<button class="btn-join" onclick="window.open('${finalUrl}', '_blank')">JOIN</button>`;
+      }
+
       const card = document.createElement("div");
       card.className =
         server.id === activeLogId ? "log-card active-sync" : "log-card";
@@ -256,7 +296,7 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
         <div class="log-actions">
             <div class="log-timer log-timer-val" id="log-timer-${server.id}">--:--</div>
-            <button class="delete-btn" onclick="deleteLog(${server.id})">X</button>
+            ${joinHtml} <button class="delete-btn" onclick="deleteLog(${server.id})">X</button>
         </div>
       `;
       logContainer.appendChild(card);
@@ -279,7 +319,6 @@ document.addEventListener("DOMContentLoaded", () => {
       currentActiveData.baseTotalMinutes + elapsedMs / (1000 * 60);
     const currentCyclePos = currentTotalMinutes % 70;
 
-    // Update Status Info di menu utama agar ikut berjalan realtime
     if (totalMinutesInfo)
       totalMinutesInfo.innerText = `${Math.floor(currentTotalMinutes)} Menit`;
     if (cyclePositionInfo)
@@ -330,7 +369,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const timerEl = document.getElementById(`log-timer-${server.id}`);
       if (!timerEl) return;
 
-      // Keamanan ekstra jika ada error tak terduga di memori lokal
       if (server.baseTotalMinutes === undefined) {
         timerEl.innerText = "Err";
         return;

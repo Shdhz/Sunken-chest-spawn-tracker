@@ -128,13 +128,17 @@ input {
   opacity: 0.9;
 }
 
-/* --- STYLE TOMBOL SIMPAN YANG BARU DITAMBAHKAN --- */
+/* Save Actions (Menyimpan Input Link Baru) */
 .save-actions {
   display: flex;
   gap: 10px;
   margin-top: 25px;
   padding-top: 20px;
   border-top: 1px solid var(--glass-border);
+}
+
+.save-actions input {
+  flex: 1; /* Membuat kedua input membagi ruang dengan rata */
 }
 
 .btn-secondary {
@@ -155,7 +159,6 @@ input {
   opacity: 0.9;
   transform: translateY(-2px);
 }
-/* ------------------------------------------------- */
 
 /* Timer Visual */
 .timer-display {
@@ -165,14 +168,14 @@ input {
 #countdown {
   font-size: 64px;
   font-weight: 800;
-  color: #ffffff; /* Warna putih agar lebih netral dan enak dibaca */
-  text-shadow: 0 0 20px rgba(0, 210, 255, 0.6); /* Efek cahaya/glow cyan */
+  color: #ffffff;
+  text-shadow: 0 0 20px rgba(0, 210, 255, 0.6);
   display: block;
   line-height: 1;
   margin-bottom: 5px;
   transition:
     color 0.4s,
-    text-shadow 0.4s; /* Transisi warna yang mulus */
+    text-shadow 0.4s;
 }
 #statusLabel {
   font-size: 12px;
@@ -198,7 +201,7 @@ input {
 
 .progress-labels {
   position: relative;
-  height: 15px; /* Memberi ruang untuk teks */
+  height: 15px;
   margin-top: 6px;
   font-size: 10px;
   color: var(--text-dim);
@@ -208,15 +211,13 @@ input {
   position: absolute;
   left: 0;
 }
-
 .progress-labels .marker {
   position: absolute;
-  left: 85.7%; /* Titik akurat 60 menit dari total 70 menit */
+  left: 85.7%;
   transform: translateX(-50%);
-  color: var(--text-main); /* Dibuat lebih terang sedikit */
+  color: var(--text-main);
   font-weight: 600;
 }
-
 .progress-labels span:nth-child(3) {
   position: absolute;
   right: 0;
@@ -235,7 +236,6 @@ input {
   padding: 12px;
   border-radius: 10px;
 }
-
 .stat-box span {
   font-size: 10px;
   color: var(--text-dim);
@@ -299,31 +299,49 @@ input {
   transition: background 0.3s;
 }
 
-.log-main h5 {
+.log-info h5 {
   font-size: 14px;
   margin-bottom: 4px;
 }
-.log-main p {
+.log-info p {
   font-size: 11px;
   color: var(--text-dim);
 }
 
-/* --- TATA LETAK ACTION DI LOG CARD --- */
 .log-actions {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 12px;
 }
-/* ------------------------------------- */
 
 .log-timer-val {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 800;
   color: var(--accent-emerald);
-  min-width: 60px;
+  min-width: 55px;
   text-align: right;
 }
-/* --- STYLE TOMBOL X (HAPUS LOG) --- */
+
+/* --- TOMBOL JOIN BARU --- */
+.btn-join {
+  background: linear-gradient(135deg, #3b82f6, var(--accent-cyan));
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-weight: 800;
+  font-size: 12px;
+  cursor: pointer;
+  transition:
+    transform 0.2s,
+    opacity 0.2s;
+}
+.btn-join:hover {
+  opacity: 0.9;
+  transform: scale(1.05);
+}
+/* ------------------------ */
+
 .delete-btn {
   background: rgba(244, 63, 94, 0.15);
   border: 1px solid transparent;
@@ -351,7 +369,7 @@ input {
   }
 }
 
-/* --- ANIMASI LOADING YANG BARU DITAMBAHKAN --- */
+/* Loading State */
 .loading-state {
   text-align: center;
   padding: 40px 0;
@@ -385,7 +403,6 @@ input {
     opacity: 1;
   }
 }
-/* ----------------------------------------------- */
 
 .error-badge {
   background: var(--accent-rose);
@@ -425,7 +442,6 @@ input {
   }
 }
 
-/* Penanda visual untuk log yang sedang sinkron dengan kalkulator (DIperbaiki) */
 .log-card.active-sync {
   background: rgba(0, 210, 255, 0.15);
   border-left-color: var(--accent-cyan);
