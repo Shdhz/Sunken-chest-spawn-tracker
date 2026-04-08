@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sunkenchest Tracker | ShDhz</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="app-wrapper">
+      <header class="main-header">
+        <div class="logo-area">
+          <div class="status-indicator-dot"></div>
+          <h1>SUNKEN<span>TRACKER</span></h1>
+        </div>
+        <p class="server-status">Siklus 70m | Spawn 60m</p>
+      </header>
+
+      <main class="dashboard-grid">
+        <section class="panel-control">
+          <div class="card-glass">
+            <h3 class="card-title">Input Uptime Server</h3>
+            <div class="input-group">
+              <button id="subBtn" class="btn-adjust" title="Kurangi 1 Menit">
+                -1m
+              </button>
+              <input
+                type="text"
+                id="timeInput"
+                placeholder="Contoh: 1d 7h 45m"
+                autocomplete="off"
+              />
+              <button id="addBtn" class="btn-adjust" title="Tambah 1 Menit">
+                +1m
+              </button>
+            </div>
+            <button id="calculateBtn" class="btn-primary">
+              HITUNG ESTIMASI
+            </button>
+            <div id="errorMsg" class="error-badge">Format tidak valid</div>
+          </div>
+
+          <div id="loadingOverlay" class="loading-state" style="display: none">
+            <div class="spinner"></div>
+            <p>Mengkalkulasi siklus...</p>
+          </div>
+
+          <div
+            id="resultSection"
+            class="card-glass result-card"
+            style="display: none"
+          >
+            <div class="timer-display">
+              <span id="countdown">00:00</span>
+              <p id="statusLabel">Menuju Spawn</p>
+            </div>
+
+            <div class="progress-wrapper">
+              <div class="progress-track">
+                <div id="progressBar" class="progress-fill"></div>
+              </div>
+              <div class="progress-labels">
+                <span>0m</span>
+                <span class="marker">Spawn</span>
+                <span>Reset</span>
+              </div>
+            </div>
+
+            <div class="stats-grid">
+              <div class="stat-box">
+                <span>Umur Server</span>
+                <p id="totalMinutesInfo">0m</p>
+              </div>
+              <div class="stat-box">
+                <span>Posisi Siklus</span>
+                <p id="cyclePositionInfo">0/70</p>
+              </div>
+              <div class="stat-box accent">
+                <span>Target Uptime</span>
+                <p id="targetUptimeInfo">-</p>
+              </div>
+              <div class="stat-box accent">
+                <span>Waktu Lokal</span>
+                <p id="realWorldTimeInfo">-</p>
+              </div>
+            </div>
+
+            <div class="save-actions">
+              <input
+                type="text"
+                id="serverNameInput"
+                placeholder="ID/Nama Server"
+                maxlength="15"
+              />
+              <button id="saveLogBtn" class="btn-secondary">SIMPAN LOG</button>
+            </div>
+          </div>
+        </section>
+
+        <aside class="panel-logs">
+          <div class="log-header">
+            <h3>Live Server Logs</h3>
+            <span id="logCount" class="badge-count">0</span>
+          </div>
+          <div id="logContainer" class="log-scroll-area"></div>
+        </aside>
+      </main>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
