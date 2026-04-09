@@ -1,5 +1,7 @@
 function initTracker() {
+  // ---------------------------------------------------------
   // DOM Elements
+  // ---------------------------------------------------------
   const timeInput = document.getElementById("timeInput");
   const calculateBtn = document.getElementById("calculateBtn");
   const addBtn = document.getElementById("addBtn");
@@ -18,23 +20,32 @@ function initTracker() {
   const realWorldTimeInfo = document.getElementById("realWorldTimeInfo");
 
   const serverNameInput = document.getElementById("serverNameInput");
-  const serverLinkInput = document.getElementById("serverLinkInput"); // BARU
+  const serverLinkInput = document.getElementById("serverLinkInput");
   const saveLogBtn = document.getElementById("saveLogBtn");
+
+  // DOM Log Containers
   const logContainer = document.getElementById("logContainer");
+  const soonContainer = document.getElementById("soonContainer");
+  const soonSection = document.getElementById("soonSection");
+  const spawningContainer = document.getElementById("spawningContainer"); // BARU
+  const spawningSection = document.getElementById("spawningSection"); // BARU
+  const allSectionTitle = document.getElementById("allSectionTitle");
   const logCountEl = document.getElementById("logCount");
 
-  // DOM Elements - Volume Control
+  // DOM Volume Control
   const alarmVolumeSlider = document.getElementById("alarmVolumeSlider");
   const volumeValueText = document.getElementById("volumeValueText");
   const testAlarmBtn = document.getElementById("testAlarmBtn");
 
+  // ---------------------------------------------------------
   // State Variables
+  // ---------------------------------------------------------
   let globalInterval;
   let currentActiveData = null;
   let activeLogId = null;
-  let audioCtx = null;
+  let isAudioPlaying = false; // Mencegah audio menumpuk/overlap
 
-  // Load LocalStorage & Auto-Hapus format log usang agar tidak nyangkut/stuck
+  // Load LocalStorage & Auto-Hapus format log usang
   let savedServers = JSON.parse(localStorage.getItem("sunkenServers")) || [];
   const validServers = savedServers.filter(
     (s) => s.baseTotalMinutes !== undefined,
@@ -45,7 +56,7 @@ function initTracker() {
   }
 
   // ---------------------------------------------------------
-  // 1. Load State Volume & Event Listener Slider
+  // Volume State & Listeners
   // ---------------------------------------------------------
   let currentVolume = parseFloat(localStorage.getItem("sunkenAlarmVolume"));
   if (isNaN(currentVolume)) currentVolume = 1.0;
@@ -55,7 +66,6 @@ function initTracker() {
     if (volumeValueText)
       volumeValueText.innerText = `${Math.round(currentVolume * 100)}%`;
 
-    // Saat slider digeser
     alarmVolumeSlider.addEventListener("input", (e) => {
       currentVolume = parseFloat(e.target.value);
       if (volumeValueText)
@@ -64,7 +74,6 @@ function initTracker() {
     });
   }
 
-  // Tombol Test Suara
   if (testAlarmBtn) {
     testAlarmBtn.addEventListener("click", () => {
       try {
@@ -80,22 +89,12 @@ function initTracker() {
   }
 
   // ---------------------------------------------------------
-  // 2. Bypass Auto-Play Audio Browser
+  // Initialization
   // ---------------------------------------------------------
-  document.body.addEventListener("click", () => {
-    if (!audioCtx) {
-      const AudioContext = window.AudioContext || window.webkitAudioContext;
-      if (AudioContext) audioCtx = new AudioContext();
-    }
-    if (audioCtx && audioCtx.state === "suspended") {
-      audioCtx.resume();
-    }
-  });
-
   renderLogs();
   startGlobalTimer();
 
-  // Event Listeners
+  // Event Listeners Utama
   if (calculateBtn)
     calculateBtn.addEventListener("click", () => processTime(false));
   if (timeInput) {
@@ -107,7 +106,9 @@ function initTracker() {
   if (subBtn) subBtn.addEventListener("click", () => adjustInputTime(-1));
   if (saveLogBtn) saveLogBtn.addEventListener("click", saveToLog);
 
+  // ---------------------------------------------------------
   // Core Logic Functions
+  // ---------------------------------------------------------
   function adjustInputTime(minutesToAdd) {
     let total = parseInputToMinutes(timeInput.value);
     if (total === 0 && !/\d/.test(timeInput.value)) return;
@@ -130,6 +131,12 @@ function initTracker() {
 
   function parseInputToMinutes(inputStr) {
     inputStr = inputStr.toLowerCase().trim();
+
+    // PERBAIKAN: Jika input murni hanya angka, otomatis anggap sebagai menit
+    if (/^\d+$/.test(inputStr)) {
+      return parseInt(inputStr);
+    }
+
     const daysMatch = inputStr.match(/(\d+)\s*d/);
     const hoursMatch = inputStr.match(/(\d+)\s*h/);
     const minutesMatch = inputStr.match(/(\d+)\s*m/);
@@ -160,7 +167,8 @@ function initTracker() {
       parsedMinutes === 0 &&
       !/\d/.test(input)
     ) {
-      errorMsg.innerText = "Format waktu tidak dikenali. Cth: 1d 7h 45m";
+      errorMsg.innerText =
+        "Format waktu tidak dikenali. Cth: 1d 7h 45m atau 45";
       errorMsg.style.display = "block";
       resultSection.style.display = "none";
       return;
@@ -246,29 +254,28 @@ function initTracker() {
     }
   }
 
+  // ---------------------------------------------------------
   // Log Management
+  // ---------------------------------------------------------
   function saveToLog() {
     if (!currentActiveData) return;
     const serverName =
       serverNameInput.value.trim() || `Server ${savedServers.length + 1}`;
     const serverLink = serverLinkInput.value.trim();
 
-    // --- UPDATE FITUR VALIDASI: Pengecualian Untuk RoPro ---
+    // Validasi Link RoPro / Web
     if (serverLink) {
       const isHttp = serverLink.startsWith("http");
       const isRoPro = serverLink.includes("ropro.io");
       const isFullJobId = serverLink.length >= 30;
 
-      // Jika BUKAN link web, BUKAN link RoPro, DAN kurang dari 30 karakter (Short ID salah)
       if (!isHttp && !isRoPro && !isFullJobId) {
         alert(
-          "⚠️ PERINGATAN FORMAT ID!\n\n" +
-            "Input terlalu pendek. Gunakan Full Job ID, Full Link, atau Link Invite RoPro (ropro.io/...).",
+          "⚠️ PERINGATAN FORMAT ID!\n\nInput terlalu pendek. Gunakan Full Job ID, Full Link, atau Link Invite RoPro.",
         );
         return;
       }
     }
-    // --------------------------------------------------------
 
     const newLog = {
       id: Date.now(),
@@ -301,15 +308,23 @@ function initTracker() {
     const logContainer = document.getElementById("logContainer");
     const soonContainer = document.getElementById("soonContainer");
     const soonSection = document.getElementById("soonSection");
+    const spawningContainer = document.getElementById("spawningContainer");
+    const spawningSection = document.getElementById("spawningSection");
     const allSectionTitle = document.getElementById("allSectionTitle");
     const now = Date.now();
 
-    // --- INI ADALAH PENGAMAN AGAR TIDAK ERROR (Cannot set properties of null) ---
-    if (!logContainer || !soonContainer || !soonSection) return;
-    // ---------------------------------------------------------------------------
+    if (
+      !logContainer ||
+      !soonContainer ||
+      !soonSection ||
+      !spawningContainer ||
+      !spawningSection
+    )
+      return;
 
     logContainer.innerHTML = "";
     soonContainer.innerHTML = "";
+    spawningContainer.innerHTML = "";
 
     if (logCountEl) logCountEl.innerText = savedServers.length;
 
@@ -317,13 +332,13 @@ function initTracker() {
       logContainer.innerHTML =
         '<p style="color:#888; font-size:13px;">Belum ada server.</p>';
       soonSection.style.display = "none";
+      spawningSection.style.display = "none";
       if (allSectionTitle) allSectionTitle.style.display = "none";
       return;
     } else {
       if (allSectionTitle) allSectionTitle.style.display = "block";
     }
 
-    // 1. Hitung & Sortir semua server
     const processedServers = savedServers
       .map((server) => {
         const elapsedMs = now - server.calculationTimestamp;
@@ -341,23 +356,31 @@ function initTracker() {
           timeDiff = 60 - pos;
         }
 
+        // PERBAIKAN: Gunakan detik mutlak agar presisi
+        const totalSecondsLeft = Math.floor(timeDiff * 60);
+
         return {
           ...server,
           timeDiff,
+          totalSecondsLeft,
           isSpawning,
           weight: isSpawning ? pos - 70 : 60 - pos,
         };
       })
       .sort((a, b) => a.weight - b.weight);
 
-    // 2. Pisahkan berdasarkan kondisi < 10 menit (dan belum masuk fase reset 70m)
-    const soonList = processedServers.filter((s) => s.timeDiff <= 10);
-    const othersList = processedServers.filter((s) => s.timeDiff > 10);
+    // PERBAIKAN: Gunakan 600 detik (10 menit pas) sebagai pemisah
+    const spawningList = processedServers.filter((s) => s.isSpawning);
+    const soonList = processedServers.filter(
+      (s) => !s.isSpawning && s.totalSecondsLeft <= 600,
+    );
+    const othersList = processedServers.filter(
+      (s) => !s.isSpawning && s.totalSecondsLeft > 600,
+    );
 
-    // Tampilkan/Sembunyikan header "Soon"
+    spawningSection.style.display = spawningList.length > 0 ? "block" : "none";
     soonSection.style.display = soonList.length > 0 ? "block" : "none";
 
-    // 3. Render Fungsi Helper untuk Card
     const createCard = (server) => {
       let joinHtml = "";
       if (server.link) {
@@ -368,17 +391,24 @@ function initTracker() {
         if (!finalUrl.startsWith("http")) {
           finalUrl = `https://www.roblox.com/games/start?placeId=16732694052&gameId=${finalUrl}`;
         }
+        finalUrl = finalUrl.replace(/'/g, "%27").replace(/"/g, "%22");
         joinHtml = `<button class="btn-join" onclick="window.open('${finalUrl}', '_blank')">JOIN</button>`;
       }
 
-      const isSoonClass = server.timeDiff <= 10 ? "soon-highlight" : "";
+      // Gunakan logika detik mutlak untuk styling helper
+      const isSoonClass =
+        !server.isSpawning && server.totalSecondsLeft <= 600
+          ? "soon-highlight"
+          : "";
+      const isSpawningClass = server.isSpawning ? "spawning-highlight" : "";
       const activeClass = server.id === activeLogId ? "active-sync" : "";
+      const safeName = server.name.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
       const card = document.createElement("div");
-      card.className = `log-card ${activeClass} ${isSoonClass}`;
+      card.className = `log-card ${activeClass} ${isSoonClass} ${isSpawningClass}`;
       card.innerHTML = `
       <div class="log-info">
-          <h5>${server.name}</h5>
+          <h5>${safeName}</h5>
           <p>${server.realWorldTime} | ${server.uptimeText}</p>
       </div>
       <div class="log-actions">
@@ -389,24 +419,26 @@ function initTracker() {
       return card;
     };
 
-    // Masukkan ke kontainer masing-masing
+    spawningList.forEach((s) => spawningContainer.appendChild(createCard(s)));
     soonList.forEach((s) => soonContainer.appendChild(createCard(s)));
     othersList.forEach((s) => logContainer.appendChild(createCard(s)));
   }
 
-  // Global Ticker
+  // ---------------------------------------------------------
+  // Global Tickers & Timers
+  // ---------------------------------------------------------
   function startGlobalTimer() {
     globalInterval = setInterval(() => {
       updateMainTimerUI();
       updateLogTimers();
     }, 1000);
 
-    // Auto re-sort daftar UI setiap 15 detik
+    // Auto re-sort daftar UI setiap 60 detik (agar tidak terlalu cepat pindah)
     setInterval(() => {
-      if (savedServers.length > 1) {
+      if (savedServers.length > 0) {
         renderLogs();
       }
-    }, 15000);
+    }, 60000);
   }
 
   function updateMainTimerUI() {
@@ -461,6 +493,7 @@ function initTracker() {
 
   function updateLogTimers() {
     let logUpdated = false;
+    let needsReRender = false; // FLAG BARU: Untuk trigger perpindahan wadah
     const now = Date.now();
 
     savedServers.forEach((server) => {
@@ -494,9 +527,29 @@ function initTracker() {
 
       timerEl.innerText = `${String(minutesLeft).padStart(2, "0")}:${String(secondsLeft).padStart(2, "0")}`;
 
+      // --- PERBAIKAN: DETEKSI PERUBAHAN FASE SECARA REAL-TIME ---
+      let currentPhase = "others";
+      if (isSpawningPhase) {
+        currentPhase = "spawning";
+      } else if (totalSecondsLeft <= 600) {
+        currentPhase = "soon";
+      }
+
+      if (server.lastPhase !== currentPhase) {
+        if (server.lastPhase !== undefined) {
+          needsReRender = true; // Fase berubah! Minta UI re-render segera
+        }
+        server.lastPhase = currentPhase;
+        logUpdated = true;
+      }
+      // ---------------------------------------------------------
+
       if (isSpawningPhase) {
         timerEl.classList.add("spawning");
         timerEl.parentElement.parentElement.classList.add("spawning");
+
+        timerEl.style.color = "var(--accent-amber, #F59E0B)";
+        timerEl.style.textShadow = "0 0 10px rgba(245, 158, 11, 0.4)";
 
         if (!server.alertSpawnPlayed) {
           playAudioAlert();
@@ -507,6 +560,15 @@ function initTracker() {
         timerEl.classList.remove("spawning");
         timerEl.parentElement.parentElement.classList.remove("spawning");
 
+        // PERBAIKAN: Samakan logika warna hijau dengan detik mutlak (600 detik = 10m)
+        if (totalSecondsLeft <= 600) {
+          timerEl.style.color = "var(--accent-emerald, #10B981)";
+          timerEl.style.textShadow = "0 0 10px rgba(16, 185, 129, 0.4)";
+        } else {
+          timerEl.style.color = "var(--accent-cyan, #00D2FF)";
+          timerEl.style.textShadow = "none";
+        }
+
         if (server.alertSpawnPlayed) {
           server.alertSpawnPlayed = false;
           logUpdated = true;
@@ -516,9 +578,18 @@ function initTracker() {
 
     if (logUpdated)
       localStorage.setItem("sunkenServers", JSON.stringify(savedServers));
+
+    // EKSEKUSI PEMINDAHAN WADAH JIKA DIPERLUKAN (Lompat secara instan)
+    if (needsReRender) {
+      renderLogs();
+    }
   }
 
   function playAudioAlert() {
+    // Mencegah audio menumpuk jika beberapa server reset bersamaan
+    if (isAudioPlaying) return;
+    isAudioPlaying = true;
+
     try {
       const audio = new Audio("alarm.mp3");
       audio.volume = currentVolume;
@@ -531,20 +602,18 @@ function initTracker() {
           playCount++;
           audio.currentTime = 0;
           audio.play();
+        } else {
+          isAudioPlaying = false; // Buka kunci saat selesai
         }
       });
 
       audio.play().catch((error) => {
-        console.log(
-          "Browser memblokir pemutaran audio. Pastikan Anda sudah mengklik area website.",
-          error,
-        );
+        isAudioPlaying = false;
+        console.log("Browser memblokir pemutaran audio.", error);
       });
     } catch (e) {
-      console.log(
-        "Gagal memutar alarm.mp3. Pastikan nama file sudah benar.",
-        e,
-      );
+      isAudioPlaying = false;
+      console.log("Gagal memutar alarm.mp3", e);
     }
   }
 }

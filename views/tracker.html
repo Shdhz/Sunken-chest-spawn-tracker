@@ -83,10 +83,27 @@
       <h3>Live Server Logs</h3>
       <span id="logCount" class="badge-count">0</span>
     </div>
+
+    <div id="spawningSection" style="display: none; margin-bottom: 25px">
+      <h4
+        style="
+          color: var(--accent-amber, #f59e0b);
+          font-size: 12px;
+          margin-bottom: 10px;
+          text-transform: uppercase;
+        "
+      >
+        Sedang Spawn
+      </h4>
+      <div id="spawningContainer" class="log-grid-layout"></div>
+    </div>
     <div id="soonSection" style="display: none; margin-bottom: 25px">
       <h4
         style="
-          color: var(--accent-amber);
+          color: var(
+            --accent-emerald,
+            #10b981
+          ); /* Disesuaikan agar senada dengan timer segera spawn */
           font-size: 12px;
           margin-bottom: 10px;
           text-transform: uppercase;
@@ -96,6 +113,7 @@
       </h4>
       <div id="soonContainer" class="log-grid-layout"></div>
     </div>
+
     <div id="allSection">
       <h4
         id="allSectionTitle"

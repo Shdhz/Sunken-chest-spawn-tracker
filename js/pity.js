@@ -16,8 +16,12 @@ function initPity() {
   const editPityBtn = document.getElementById("editPityBtn");
 
   // Load state dari LocalStorage
-  let currentPity = parseInt(localStorage.getItem("sunkenPity")) || 0;
-  let chestsOpened = parseInt(localStorage.getItem("sunkenChestsOpened")) || 0;
+  let storedPity = parseInt(localStorage.getItem("sunkenPity"), 10);
+  let storedChests = parseInt(localStorage.getItem("sunkenChestsOpened"), 10);
+
+  // PERBAIKAN: Pengecekan ketat IsNaN
+  let currentPity = isNaN(storedPity) ? 0 : storedPity;
+  let chestsOpened = isNaN(storedChests) ? 0 : storedChests;
   let hasTentacle = localStorage.getItem("sunkenHasTentacle") === "true"; // State Inventory Baru
   const MAX_PITY = 250;
 
@@ -85,8 +89,8 @@ function initPity() {
     });
   if (subNormalBtn)
     subNormalBtn.addEventListener("click", () => {
-      currentPity -= 1;
-      chestsOpened -= 1;
+      if (currentPity > 0) currentPity -= 1;
+      if (chestsOpened > 0) chestsOpened -= 1;
       updatePityUI();
     });
   if (addMythicBtn)
@@ -97,8 +101,8 @@ function initPity() {
     });
   if (subMythicBtn)
     subMythicBtn.addEventListener("click", () => {
-      currentPity -= 10;
-      chestsOpened -= 1;
+      currentPity = Math.max(0, currentPity - 10);
+      if (chestsOpened > 0) chestsOpened -= 1;
       updatePityUI();
     });
 
@@ -110,16 +114,29 @@ function initPity() {
         currentPity,
       );
       if (inputPity !== null && inputPity.trim() !== "") {
-        const parsedPity = parseInt(inputPity);
+        let parsedPity = parseInt(inputPity, 10);
         if (!isNaN(parsedPity)) {
+          // PERBAIKAN UX: Beri info jika angka melebihi batas
+          if (parsedPity > MAX_PITY) {
+            alert(
+              `Pity tidak bisa lebih dari ${MAX_PITY}. Nilai akan diubah menjadi ${MAX_PITY}.`,
+            );
+            parsedPity = MAX_PITY;
+          } else if (parsedPity < 0) {
+            parsedPity = 0;
+          }
+
           currentPity = parsedPity;
+
           const inputChest = prompt(
             "Masukkan jumlah TOTAL CHEST yang sudah dibuka:",
             chestsOpened,
           );
           if (inputChest !== null && inputChest.trim() !== "") {
-            const parsedChest = parseInt(inputChest);
-            if (!isNaN(parsedChest)) chestsOpened = parsedChest;
+            const parsedChest = parseInt(inputChest, 10);
+            if (!isNaN(parsedChest) && parsedChest >= 0) {
+              chestsOpened = parsedChest;
+            }
           }
           updatePityUI();
         } else {
