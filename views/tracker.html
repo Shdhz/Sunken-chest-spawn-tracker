@@ -1,0 +1,114 @@
+<div class="dashboard-grid">
+  <section class="panel-control">
+    <div class="card-glass">
+      <h3 class="card-title">Input Uptime Server</h3>
+      <div class="input-group">
+        <button id="subBtn" class="btn-adjust" title="Kurangi 1 Menit">
+          -1m
+        </button>
+        <input
+          type="text"
+          id="timeInput"
+          placeholder="Contoh: 1d 7h 45m"
+          autocomplete="off"
+        />
+        <button id="addBtn" class="btn-adjust" title="Tambah 1 Menit">
+          +1m
+        </button>
+      </div>
+      <button id="calculateBtn" class="btn-primary">HITUNG ESTIMASI</button>
+      <div id="errorMsg" class="error-badge">Format tidak valid</div>
+    </div>
+
+    <div id="loadingOverlay" class="loading-state" style="display: none">
+      <div class="spinner"></div>
+      <p>Mengkalkulasi siklus...</p>
+    </div>
+
+    <div
+      id="resultSection"
+      class="card-glass result-card"
+      style="display: none"
+    >
+      <div class="timer-display">
+        <span id="countdown">00:00</span>
+        <p id="statusLabel">Menuju Spawn</p>
+      </div>
+      <div class="progress-wrapper">
+        <div class="progress-track">
+          <div id="progressBar" class="progress-fill"></div>
+        </div>
+        <div class="progress-labels">
+          <span>0m</span><span class="marker">Spawn</span><span>Reset</span>
+        </div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-box">
+          <span>Umur Server</span>
+          <p id="totalMinutesInfo">0m</p>
+        </div>
+        <div class="stat-box">
+          <span>Posisi Siklus</span>
+          <p id="cyclePositionInfo">0/70</p>
+        </div>
+        <div class="stat-box accent">
+          <span>Target Uptime</span>
+          <p id="targetUptimeInfo">-</p>
+        </div>
+        <div class="stat-box accent">
+          <span>Waktu Lokal</span>
+          <p id="realWorldTimeInfo">-</p>
+        </div>
+      </div>
+      <div class="save-actions">
+        <input
+          type="text"
+          id="serverNameInput"
+          placeholder="ID/Nama"
+          maxlength="15"
+        />
+        <input
+          type="text"
+          id="serverLinkInput"
+          placeholder="Job ID / Link"
+          autocomplete="off"
+        />
+        <button id="saveLogBtn" class="btn-secondary">SIMPAN LOG</button>
+      </div>
+    </div>
+  </section>
+
+  <aside class="panel-logs">
+    <div class="log-header">
+      <h3>Live Server Logs</h3>
+      <span id="logCount" class="badge-count">0</span>
+    </div>
+    <div id="soonSection" style="display: none; margin-bottom: 25px">
+      <h4
+        style="
+          color: var(--accent-amber);
+          font-size: 12px;
+          margin-bottom: 10px;
+          text-transform: uppercase;
+        "
+      >
+        Segera Spawn (< 10m)
+      </h4>
+      <div id="soonContainer" class="log-grid-layout"></div>
+    </div>
+    <div id="allSection">
+      <h4
+        id="allSectionTitle"
+        style="
+          color: var(--text-dim);
+          font-size: 12px;
+          margin-bottom: 10px;
+          text-transform: uppercase;
+        "
+      >
+        Semua Server
+      </h4>
+      <div id="logContainer" class="log-scroll-area"></div>
+    </div>
+  </aside>
+</div>

@@ -1,0 +1,1043 @@
+:root {
+  --bg-deep: #0f172a;
+  --bg-card: rgba(30, 41, 59, 0.7);
+  --accent-cyan: #00d2ff;
+  --accent-emerald: #10b981;
+  --accent-amber: #f59e0b;
+  --accent-rose: #f43f5e;
+  --text-main: #f8fafc;
+  --text-dim: #94a3b8;
+  --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  background-color: var(--bg-deep);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+.app-wrapper {
+  width: 100%;
+  max-width: 1100px;
+}
+
+/* Header Style */
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--glass-border);
+  margin-bottom: 30px;
+}
+
+.logo-area {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.logo-area h1 {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+.logo-area span {
+  color: var(--accent-cyan);
+}
+.status-indicator-dot {
+  width: 10px;
+  height: 10px;
+  background: var(--accent-emerald);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--accent-emerald);
+}
+
+/* Layout Grid */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 30px;
+  align-items: start;
+}
+
+.panel-control {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.card-glass {
+  background: var(--bg-card);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 25px;
+}
+
+.card-title {
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 15px;
+}
+
+/* Input & Buttons */
+.input-group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+input {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 12px;
+  color: white;
+  font-size: 15px;
+  width: 100%;
+}
+
+.btn-adjust {
+  background: #334155;
+  color: var(--accent-cyan);
+  border: none;
+  padding: 0 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--accent-cyan), #3b82f6);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+/* Save Actions */
+.save-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid var(--glass-border);
+  align-items: center;
+}
+
+.save-actions input {
+  flex: 1;
+  min-width: 0;
+}
+
+.btn-secondary {
+  background: var(--accent-emerald);
+  color: #0f172a;
+  border: none;
+  padding: 11px;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    opacity 0.2s,
+    transform 0.2s;
+}
+.btn-secondary:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+/* Timer Visual */
+.timer-display {
+  text-align: center;
+  margin-bottom: 25px;
+}
+#countdown {
+  font-size: 64px;
+  font-weight: 800;
+  color: #ffffff;
+  text-shadow: 0 0 20px rgba(0, 210, 255, 0.6);
+  display: block;
+  line-height: 1;
+  margin-bottom: 5px;
+  transition:
+    color 0.4s,
+    text-shadow 0.4s;
+}
+#statusLabel {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+}
+
+.progress-track {
+  background: #1e293b;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--accent-cyan);
+  width: 0%;
+  transition: width 0.5s ease;
+}
+
+.progress-labels {
+  position: relative;
+  height: 15px;
+  margin-top: 6px;
+  font-size: 10px;
+  color: var(--text-dim);
+}
+
+.progress-labels span:nth-child(1) {
+  position: absolute;
+  left: 0;
+}
+.progress-labels .marker {
+  position: absolute;
+  left: 85.7%;
+  transform: translateX(-50%);
+  color: var(--text-main);
+  font-weight: 600;
+}
+.progress-labels span:nth-child(3) {
+  position: absolute;
+  right: 0;
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 25px 0;
+}
+
+.stat-box {
+  background: rgba(15, 23, 42, 0.5);
+  padding: 12px;
+  border-radius: 10px;
+}
+.stat-box span {
+  font-size: 10px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+.stat-box p {
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+.stat-box.accent p {
+  color: var(--accent-cyan);
+}
+
+/* ========================================= */
+/* --- PITY TRACKER STYLES (YANG HILANG) --- */
+/* ========================================= */
+.pity-display {
+  text-align: center;
+  font-size: 36px;
+  font-weight: 800;
+  color: #ffffff;
+  text-shadow: 0 0 15px rgba(245, 158, 11, 0.5);
+  margin-bottom: 15px;
+}
+
+.pity-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.btn-pity {
+  padding: 12px 10px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 11px;
+  cursor: pointer;
+  color: white;
+  transition:
+    transform 0.2s,
+    filter 0.2s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.btn-pity:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+.btn-pity:active {
+  transform: translateY(0);
+}
+
+.btn-pity.normal {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+}
+
+.btn-pity.mythic {
+  background: linear-gradient(135deg, #a855f7, #7e22ce);
+  box-shadow: 0 4px 10px rgba(168, 85, 247, 0.3);
+}
+
+.btn-pity.success {
+  background: linear-gradient(135deg, var(--accent-emerald), #059669);
+  color: #0f172a;
+  box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+}
+
+.pity-divider {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 15px 0 12px 0;
+  position: relative;
+}
+
+.pity-divider::before,
+.pity-divider::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 12%;
+  height: 1px;
+  background: var(--glass-border);
+}
+
+.pity-divider::before {
+  left: 0;
+}
+.pity-divider::after {
+  right: 0;
+}
+
+/* Grup tombol agar tombol kurang (-) dan tambah (+) berdampingan */
+.pity-action-group {
+  display: flex;
+  gap: 5px;
+  width: 100%;
+}
+
+.pity-action-group .btn-pity:last-child {
+  flex: 1; /* Tombol tambah akan memenuhi sisa ruang */
+}
+
+/* Tombol pengurangan bergaya outline agar tidak terlalu mencolok */
+.btn-pity.sub {
+  flex: 0 0 40px; /* Lebar tetap 40px */
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid currentColor;
+  box-shadow: none;
+}
+
+.btn-pity.sub:hover {
+  background: currentColor;
+  color: #fff !important;
+}
+
+/* Efek hover untuk area edit manual */
+.pity-display:hover {
+  transform: scale(1.05);
+}
+
+/* ========================================= */
+/* --- LOGS PANEL STYLES --- */
+/* ========================================= */
+.panel-logs {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 25px;
+  border: 1px solid var(--glass-border);
+  display: flex;
+  flex-direction: column;
+}
+.log-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.badge-count {
+  background: var(--accent-cyan);
+  color: #000;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.log-grid-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.log-scroll-area {
+  overflow-y: auto;
+  max-height: 600px;
+  padding-right: 5px;
+}
+.log-scroll-area::-webkit-scrollbar {
+  width: 5px;
+}
+.log-scroll-area::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 10px;
+}
+
+.log-card {
+  background: rgba(15, 23, 42, 0.4);
+  border-left: 4px solid var(--accent-cyan);
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.3s;
+}
+
+.log-card.soon-highlight {
+  border-left-color: var(--accent-amber);
+  background: rgba(245, 158, 11, 0.1);
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.1);
+}
+
+.log-card.active-sync {
+  background: rgba(0, 210, 255, 0.15);
+  border-left-color: var(--accent-cyan);
+  box-shadow: inset 0 0 10px rgba(0, 210, 255, 0.1);
+}
+
+.log-card.spawning {
+  border-left-color: var(--accent-amber);
+  animation: pulse-border 1s infinite;
+}
+
+.log-info h5 {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+.log-info p {
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.log-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.log-timer-val {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--accent-emerald);
+  min-width: 55px;
+  text-align: right;
+}
+
+.btn-join {
+  background: linear-gradient(135deg, #3b82f6, var(--accent-cyan));
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-weight: 800;
+  font-size: 12px;
+  cursor: pointer;
+  transition:
+    transform 0.2s,
+    opacity 0.2s;
+}
+.btn-join:hover {
+  opacity: 0.9;
+  transform: scale(1.05);
+}
+
+.delete-btn {
+  background: rgba(244, 63, 94, 0.15);
+  border: 1px solid transparent;
+  color: var(--accent-rose);
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+  padding: 8px 14px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete-btn:hover {
+  background: var(--accent-rose);
+  color: #fff;
+  transform: scale(1.05);
+}
+
+@keyframes pulse-border {
+  50% {
+    border-left-color: white;
+  }
+}
+
+/* Loading State */
+.loading-state {
+  text-align: center;
+  padding: 40px 0;
+}
+.loading-state p {
+  color: var(--text-dim);
+  font-size: 14px;
+  margin-top: 15px;
+  animation: pulse 1.5s infinite;
+}
+.spinner {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto;
+  border: 4px solid rgba(0, 210, 255, 0.1);
+  border-top: 4px solid var(--accent-cyan);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.error-badge {
+  background: var(--accent-rose);
+  font-size: 12px;
+  padding: 8px;
+  border-radius: 6px;
+  text-align: center;
+  margin-top: 15px;
+  display: none;
+}
+
+/* ========================================= */
+/* --- SLIDER VOLUME STYLES --- */
+/* ========================================= */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  background: transparent;
+  padding: 0;
+  border: none;
+  height: 6px;
+  border-radius: 4px;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(0, 210, 255, 0.2);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 18px;
+  width: 18px;
+  border-radius: 50%;
+  background: var(--accent-cyan);
+  margin-top: -6px; /* Menengah kan posisi bulatannya */
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+  transition: transform 0.2s;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+/* Dukungan untuk Firefox */
+input[type="range"]::-moz-range-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(0, 210, 255, 0.2);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+  height: 18px;
+  width: 18px;
+  border-radius: 50%;
+  background: var(--accent-cyan);
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+}
+
+/* ========================================= */
+/* --- RESPONSIVE MEDIA QUERIES (UPDATED) -- */
+/* ========================================= */
+
+/* Tablet & Layar Menengah */
+@media (max-width: 992px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .panel-logs {
+    margin-top: 10px;
+  }
+}
+
+/* Smartphone & Layar Kecil */
+@media (max-width: 600px) {
+  body {
+    padding: 10px;
+  }
+
+  .main-header {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  /* Mengubah input dan tombol menjadi vertikal agar tidak berdesakan */
+  .save-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .save-actions input,
+  .save-actions button,
+  .btn-secondary {
+    width: 100%;
+    padding: 12px;
+  }
+
+  /* Tombol Pity disusun vertikal agar mudah ditap di HP */
+  .pity-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .btn-pity {
+    padding: 15px 10px;
+    font-size: 13px;
+  }
+
+  /* Kartu Log menjadi vertikal */
+  .log-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .log-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  #countdown {
+    font-size: 48px;
+  }
+}
+
+/* Layar HP Sangat Kecil (misal iPhone SE) */
+@media (max-width: 380px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --- NAVIGASI TAB --- */
+.app-nav {
+  display: flex;
+  gap: 10px;
+  background: rgba(15, 23, 42, 0.5);
+  padding: 5px;
+  border-radius: 10px;
+  border: 1px solid var(--glass-border);
+}
+
+.nav-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.nav-btn:hover {
+  color: var(--text-main);
+}
+
+.nav-btn.active {
+  background: var(--accent-cyan);
+  color: #0f172a;
+}
+
+/* Menyembunyikan section yang tidak aktif */
+.view-section {
+  display: none;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.view-section.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsif untuk Navigasi di HP */
+@media (max-width: 600px) {
+  .app-nav {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .nav-btn {
+    flex: 1;
+    text-align: center;
+    font-size: 13px;
+  }
+}
+
+/* ========================================= */
+/* --- ENHANCED UX: GLOBAL POLISH ---        */
+/* ========================================= */
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Input Focus Glow */
+input:focus {
+  outline: none;
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 0 3px rgba(0, 210, 255, 0.15);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+/* Card Hover Lift */
+.card-glass {
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+.card-glass:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Button Active Press Feedback */
+.btn-primary:active {
+  transform: translateY(0px) scale(0.98);
+}
+.btn-secondary:active {
+  transform: translateY(0px) scale(0.98);
+}
+.btn-adjust:active {
+  transform: scale(0.9);
+}
+.btn-adjust {
+  transition: transform 0.15s, background 0.2s;
+}
+.btn-adjust:hover {
+  background: #475569;
+}
+
+/* Nav Button Transition Enhancement */
+.nav-btn {
+  font-size: 13px;
+}
+.nav-btn svg {
+  flex-shrink: 0;
+}
+
+/* ========================================= */
+/* --- VOLUME WIDGET (Floating) ---          */
+/* ========================================= */
+
+.volume-widget {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 8px 16px 8px 12px;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.volume-widget:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.6);
+}
+
+.volume-icon-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.volume-value {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--accent-cyan);
+  min-width: 32px;
+  text-align: right;
+}
+
+.test-alarm-btn {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid var(--accent-emerald);
+  color: var(--accent-emerald);
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.25s ease;
+}
+.test-alarm-btn:hover {
+  background: rgba(16, 185, 129, 0.3);
+  transform: scale(1.1);
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
+}
+.test-alarm-btn:active {
+  transform: scale(0.95);
+}
+
+/* ========================================= */
+/* --- PITY VIEW SUB-ELEMENTS ---            */
+/* ========================================= */
+
+.pity-counter-area {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.pity-fraction {
+  font-size: 16px;
+  color: var(--text-dim);
+}
+
+.pity-chest-info {
+  font-size: 13px;
+  color: var(--accent-cyan);
+  margin-top: 10px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+.pity-chest-info span {
+  color: white;
+}
+
+.pity-edit-hint {
+  font-size: 10px;
+  color: var(--text-dim);
+  margin-top: 8px;
+  font-weight: normal;
+}
+
+.inventory-check-area {
+  text-align: center;
+  margin-bottom: 20px;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  border-radius: 8px;
+  transition: background 0.3s;
+}
+.inventory-check-area:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.inventory-label {
+  font-size: 12px;
+  color: var(--text-main);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 600;
+}
+.inventory-label input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  cursor: pointer;
+  accent-color: var(--accent-emerald);
+}
+
+.pity-progress-wrapper {
+  margin-bottom: 20px;
+}
+
+.pity-progress-track {
+  height: 12px;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.pity-status-marker {
+  left: 50%;
+}
+
+/* ========================================= */
+/* --- SECTION SUBTITLES (Log Headers) ---   */
+/* ========================================= */
+
+.section-subtitle {
+  font-size: 12px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+.section-subtitle.soon {
+  color: var(--accent-amber);
+}
+.section-subtitle.all {
+  color: var(--text-dim);
+}
+
+/* Section "Segera Spawn" wrapper */
+.soon-section-wrapper {
+  margin-bottom: 25px;
+}
+
+/* ========================================= */
+/* --- NAV BUTTON FLEX LAYOUT ---            */
+/* ========================================= */
+
+.nav-btn-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+/* ========================================= */
+/* --- FOOTER ---                            */
+/* ========================================= */
+
+.app-footer {
+  text-align: center;
+  padding: 30px 0 15px;
+  margin-top: 40px;
+  border-top: 1px solid var(--glass-border);
+  font-size: 12px;
+  color: var(--text-dim);
+  letter-spacing: 0.5px;
+}
+.app-footer span {
+  color: var(--accent-cyan);
+  font-weight: 600;
+}
+
+/* ========================================= */
+/* --- CARD ENTRANCE ANIMATION ---           */
+/* ========================================= */
+
+.log-card {
+  animation: cardSlideIn 0.3s ease-out;
+}
+
+@keyframes cardSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Log card hover */
+.log-card:hover {
+  background: rgba(15, 23, 42, 0.6);
+}
+
+/* ========================================= */
+/* --- RESPONSIVE ADDITIONS ---              */
+/* ========================================= */
+
+@media (max-width: 600px) {
+  .volume-widget {
+    bottom: 15px;
+    right: 15px;
+    padding: 6px 12px 6px 10px;
+    gap: 8px;
+  }
+
+  .app-footer {
+    margin-top: 25px;
+    padding: 20px 0 10px;
+    font-size: 11px;
+  }
+}

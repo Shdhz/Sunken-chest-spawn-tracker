@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+function initTracker() {
   // DOM Elements
   const timeInput = document.getElementById("timeInput");
   const calculateBtn = document.getElementById("calculateBtn");
@@ -23,6 +23,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const logContainer = document.getElementById("logContainer");
   const logCountEl = document.getElementById("logCount");
 
+  // DOM Elements - Volume Control
+  const alarmVolumeSlider = document.getElementById("alarmVolumeSlider");
+  const volumeValueText = document.getElementById("volumeValueText");
+  const testAlarmBtn = document.getElementById("testAlarmBtn");
+
   // State Variables
   let globalInterval;
   let currentActiveData = null;
@@ -39,7 +44,44 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("sunkenServers", JSON.stringify(savedServers));
   }
 
-  // Bypass Auto-Play Audio Browser
+  // ---------------------------------------------------------
+  // 1. Load State Volume & Event Listener Slider
+  // ---------------------------------------------------------
+  let currentVolume = parseFloat(localStorage.getItem("sunkenAlarmVolume"));
+  if (isNaN(currentVolume)) currentVolume = 1.0;
+
+  if (alarmVolumeSlider) {
+    alarmVolumeSlider.value = currentVolume;
+    if (volumeValueText)
+      volumeValueText.innerText = `${Math.round(currentVolume * 100)}%`;
+
+    // Saat slider digeser
+    alarmVolumeSlider.addEventListener("input", (e) => {
+      currentVolume = parseFloat(e.target.value);
+      if (volumeValueText)
+        volumeValueText.innerText = `${Math.round(currentVolume * 100)}%`;
+      localStorage.setItem("sunkenAlarmVolume", currentVolume);
+    });
+  }
+
+  // Tombol Test Suara
+  if (testAlarmBtn) {
+    testAlarmBtn.addEventListener("click", () => {
+      try {
+        const testAudio = new Audio("alarm.mp3");
+        testAudio.volume = currentVolume;
+        testAudio
+          .play()
+          .catch((e) => console.log("Gagal memutar audio test", e));
+      } catch (e) {
+        console.log("File audio tidak ditemukan.");
+      }
+    });
+  }
+
+  // ---------------------------------------------------------
+  // 2. Bypass Auto-Play Audio Browser
+  // ---------------------------------------------------------
   document.body.addEventListener("click", () => {
     if (!audioCtx) {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -54,13 +96,16 @@ document.addEventListener("DOMContentLoaded", () => {
   startGlobalTimer();
 
   // Event Listeners
-  calculateBtn.addEventListener("click", () => processTime(false));
-  timeInput.addEventListener("keypress", (e) => {
-    if (e.key === "Enter") processTime(false);
-  });
-  addBtn.addEventListener("click", () => adjustInputTime(1));
-  subBtn.addEventListener("click", () => adjustInputTime(-1));
-  saveLogBtn.addEventListener("click", saveToLog);
+  if (calculateBtn)
+    calculateBtn.addEventListener("click", () => processTime(false));
+  if (timeInput) {
+    timeInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") processTime(false);
+    });
+  }
+  if (addBtn) addBtn.addEventListener("click", () => adjustInputTime(1));
+  if (subBtn) subBtn.addEventListener("click", () => adjustInputTime(-1));
+  if (saveLogBtn) saveLogBtn.addEventListener("click", saveToLog);
 
   // Core Logic Functions
   function adjustInputTime(minutesToAdd) {
@@ -202,7 +247,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Log Management
-  // Log Management
   function saveToLog() {
     if (!currentActiveData) return;
     const serverName =
@@ -254,53 +298,100 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   function renderLogs() {
-    logContainer.innerHTML = "";
+    const logContainer = document.getElementById("logContainer");
+    const soonContainer = document.getElementById("soonContainer");
+    const soonSection = document.getElementById("soonSection");
+    const allSectionTitle = document.getElementById("allSectionTitle");
+    const now = Date.now();
 
-    if (logCountEl) {
-      logCountEl.innerText = savedServers.length;
-    }
+    // --- INI ADALAH PENGAMAN AGAR TIDAK ERROR (Cannot set properties of null) ---
+    if (!logContainer || !soonContainer || !soonSection) return;
+    // ---------------------------------------------------------------------------
+
+    logContainer.innerHTML = "";
+    soonContainer.innerHTML = "";
+
+    if (logCountEl) logCountEl.innerText = savedServers.length;
 
     if (savedServers.length === 0) {
       logContainer.innerHTML =
-        '<p style="color:#888; font-size:13px;">Belum ada server yang disimpan.</p>';
+        '<p style="color:#888; font-size:13px;">Belum ada server.</p>';
+      soonSection.style.display = "none";
+      if (allSectionTitle) allSectionTitle.style.display = "none";
       return;
+    } else {
+      if (allSectionTitle) allSectionTitle.style.display = "block";
     }
 
-    savedServers.forEach((server) => {
-      // --- LOGIKA SMART LINK PARSER (UPDATE ROPRO) ---
-      let joinHtml = "";
-      if (server.link) {
-        let finalUrl = server.link;
+    // 1. Hitung & Sortir semua server
+    const processedServers = savedServers
+      .map((server) => {
+        const elapsedMs = now - server.calculationTimestamp;
+        const currentTotalMinutes =
+          server.baseTotalMinutes + elapsedMs / (1000 * 60);
+        const pos = currentTotalMinutes % 70;
 
-        if (finalUrl.includes("ropro.io")) {
-          // Jika itu link RoPro tapi user lupa mengetik https://, kita tambahkan otomatis
-          if (!finalUrl.startsWith("http")) {
-            finalUrl = "https://" + finalUrl;
-          }
-        } else if (!finalUrl.startsWith("http")) {
-          // Jika itu murni kumpulan angka/huruf panjang (Job ID)
-          finalUrl = `https://www.roblox.com/games/start?placeId=16732694052&gameId=${finalUrl}`;
+        let timeDiff;
+        let isSpawning = false;
+
+        if (pos >= 60) {
+          timeDiff = 70 - pos;
+          isSpawning = true;
+        } else {
+          timeDiff = 60 - pos;
         }
 
+        return {
+          ...server,
+          timeDiff,
+          isSpawning,
+          weight: isSpawning ? pos - 70 : 60 - pos,
+        };
+      })
+      .sort((a, b) => a.weight - b.weight);
+
+    // 2. Pisahkan berdasarkan kondisi < 10 menit (dan belum masuk fase reset 70m)
+    const soonList = processedServers.filter((s) => s.timeDiff <= 10);
+    const othersList = processedServers.filter((s) => s.timeDiff > 10);
+
+    // Tampilkan/Sembunyikan header "Soon"
+    soonSection.style.display = soonList.length > 0 ? "block" : "none";
+
+    // 3. Render Fungsi Helper untuk Card
+    const createCard = (server) => {
+      let joinHtml = "";
+      if (server.link) {
+        let finalUrl =
+          server.link.includes("ropro.io") && !server.link.startsWith("http")
+            ? "https://" + server.link
+            : server.link;
+        if (!finalUrl.startsWith("http")) {
+          finalUrl = `https://www.roblox.com/games/start?placeId=16732694052&gameId=${finalUrl}`;
+        }
         joinHtml = `<button class="btn-join" onclick="window.open('${finalUrl}', '_blank')">JOIN</button>`;
       }
 
-      const card = document.createElement("div");
-      card.className =
-        server.id === activeLogId ? "log-card active-sync" : "log-card";
+      const isSoonClass = server.timeDiff <= 10 ? "soon-highlight" : "";
+      const activeClass = server.id === activeLogId ? "active-sync" : "";
 
+      const card = document.createElement("div");
+      card.className = `log-card ${activeClass} ${isSoonClass}`;
       card.innerHTML = `
-        <div class="log-info">
-            <h5>${server.name}</h5>
-            <p>Spawn: ${server.realWorldTime} | Uptime: ${server.uptimeText}</p>
-        </div>
-        <div class="log-actions">
-            <div class="log-timer log-timer-val" id="log-timer-${server.id}">--:--</div>
-            ${joinHtml} <button class="delete-btn" onclick="deleteLog(${server.id})">X</button>
-        </div>
-      `;
-      logContainer.appendChild(card);
-    });
+      <div class="log-info">
+          <h5>${server.name}</h5>
+          <p>${server.realWorldTime} | ${server.uptimeText}</p>
+      </div>
+      <div class="log-actions">
+          <div class="log-timer log-timer-val" id="log-timer-${server.id}">--:--</div>
+          ${joinHtml} <button class="delete-btn" onclick="deleteLog(${server.id})">X</button>
+      </div>
+    `;
+      return card;
+    };
+
+    // Masukkan ke kontainer masing-masing
+    soonList.forEach((s) => soonContainer.appendChild(createCard(s)));
+    othersList.forEach((s) => logContainer.appendChild(createCard(s)));
   }
 
   // Global Ticker
@@ -309,6 +400,13 @@ document.addEventListener("DOMContentLoaded", () => {
       updateMainTimerUI();
       updateLogTimers();
     }, 1000);
+
+    // Auto re-sort daftar UI setiap 15 detik
+    setInterval(() => {
+      if (savedServers.length > 1) {
+        renderLogs();
+      }
+    }, 15000);
   }
 
   function updateMainTimerUI() {
@@ -422,33 +520,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function playAudioAlert() {
     try {
-      if (!audioCtx) {
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        if (!AudioContext) return;
-        audioCtx = new AudioContext();
-      }
-      if (audioCtx.state === "suspended") audioCtx.resume();
+      const audio = new Audio("alarm.mp3");
+      audio.volume = currentVolume;
 
-      for (let i = 0; i < 5; i++) {
-        const osc = audioCtx.createOscillator();
-        const gainNode = audioCtx.createGain();
+      let playCount = 1;
+      const maxPlays = 2;
 
-        osc.type = "square";
-        osc.frequency.setValueAtTime(1000, audioCtx.currentTime);
-        const startTime = audioCtx.currentTime + i * 0.25;
-        const stopTime = startTime + 0.2;
+      audio.addEventListener("ended", () => {
+        if (playCount < maxPlays) {
+          playCount++;
+          audio.currentTime = 0;
+          audio.play();
+        }
+      });
 
-        gainNode.gain.setValueAtTime(1, startTime);
-        gainNode.gain.setValueAtTime(0, stopTime);
-
-        osc.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-
-        osc.start(startTime);
-        osc.stop(stopTime);
-      }
+      audio.play().catch((error) => {
+        console.log(
+          "Browser memblokir pemutaran audio. Pastikan Anda sudah mengklik area website.",
+          error,
+        );
+      });
     } catch (e) {
-      console.log("Audio API gagal dijalankan.", e);
+      console.log(
+        "Gagal memutar alarm.mp3. Pastikan nama file sudah benar.",
+        e,
+      );
     }
   }
-});
+}

@@ -3,8 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sunkenchest Tracker | ShDhz</title>
-    <link rel="stylesheet" href="style.css" />
+    <title>Sunken Chest Tracker | ShDhz</title>
+    <meta name="theme-color" content="#0f172a" />
+    <link rel="stylesheet" href="css/style.css" />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
       rel="stylesheet"
@@ -12,109 +13,171 @@
   </head>
   <body>
     <div class="app-wrapper">
-      <header class="main-header">
+      <header
+        class="main-header"
+        style="padding-bottom: 25px; margin-bottom: 35px"
+      >
         <div class="logo-area">
-          <div class="status-indicator-dot"></div>
-          <h1>SUNKEN CHEST<span> TRACKER</span></h1>
+          <div
+            class="status-indicator-dot"
+            style="box-shadow: 0 0 12px var(--accent-emerald)"
+          ></div>
+          <h1>
+            SUNKEN CHEST
+            <span style="text-shadow: 0 0 15px rgba(0, 210, 255, 0.4)"
+              >TRACKER</span
+            >
+          </h1>
         </div>
+        <nav class="app-nav" style="padding: 6px; gap: 8px">
+          <button
+            class="nav-btn active"
+            data-target="tracker-view"
+            style="
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 6px;
+            "
+          >
+            <svg
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            Sunken Tracker
+          </button>
+          <button
+            class="nav-btn"
+            data-target="pity-view"
+            style="
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 6px;
+            "
+          >
+            <svg
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"
+              ></path>
+              <line x1="7" y1="7" x2="7.01" y2="7"></line>
+            </svg>
+            Pity System
+          </button>
+        </nav>
       </header>
 
-      <main class="dashboard-grid">
-        <section class="panel-control">
-          <div class="card-glass">
-            <h3 class="card-title">Input Uptime Server</h3>
-            <div class="input-group">
-              <button id="subBtn" class="btn-adjust" title="Kurangi 1 Menit">
-                -1m
-              </button>
-              <input
-                type="text"
-                id="timeInput"
-                placeholder="Contoh: 1d 7h 45m"
-                autocomplete="off"
-              />
-              <button id="addBtn" class="btn-adjust" title="Tambah 1 Menit">
-                +1m
-              </button>
-            </div>
-            <button id="calculateBtn" class="btn-primary">
-              HITUNG ESTIMASI
-            </button>
-            <div id="errorMsg" class="error-badge">Format tidak valid</div>
-          </div>
+      <main id="tracker-view" class="view-section active"></main>
 
-          <div id="loadingOverlay" class="loading-state" style="display: none">
-            <div class="spinner"></div>
-            <p>Mengkalkulasi siklus...</p>
-          </div>
-
-          <div
-            id="resultSection"
-            class="card-glass result-card"
-            style="display: none"
-          >
-            <div class="timer-display">
-              <span id="countdown">00:00</span>
-              <p id="statusLabel">Menuju Spawn</p>
-            </div>
-
-            <div class="progress-wrapper">
-              <div class="progress-track">
-                <div id="progressBar" class="progress-fill"></div>
-              </div>
-              <div class="progress-labels">
-                <span>0m</span>
-                <span class="marker">Spawn</span>
-                <span>Reset</span>
-              </div>
-            </div>
-
-            <div class="stats-grid">
-              <div class="stat-box">
-                <span>Umur Server</span>
-                <p id="totalMinutesInfo">0m</p>
-              </div>
-              <div class="stat-box">
-                <span>Posisi Siklus</span>
-                <p id="cyclePositionInfo">0/70</p>
-              </div>
-              <div class="stat-box accent">
-                <span>Target Uptime</span>
-                <p id="targetUptimeInfo">-</p>
-              </div>
-              <div class="stat-box accent">
-                <span>Waktu Lokal</span>
-                <p id="realWorldTimeInfo">-</p>
-              </div>
-            </div>
-
-            <div class="save-actions">
-              <input
-                type="text"
-                id="serverNameInput"
-                placeholder="ID/Nama"
-                maxlength="15"
-              />
-              <input
-                type="text"
-                id="serverLinkInput"
-                placeholder="Job ID / Link"
-                autocomplete="off"
-              />
-              <button id="saveLogBtn" class="btn-secondary">SIMPAN LOG</button>
-            </div>
-          </div>
-        </section>
-
-        <aside class="panel-logs">
-          <div class="log-header">
-            <h3>Live Server Logs</h3>
-            <span id="logCount" class="badge-count">0</span>
-          </div>
-          <div id="logContainer" class="log-scroll-area"></div>
-        </aside>
-      </main>
+      <main
+        id="pity-view"
+        class="view-section"
+        style="display: none; max-width: 600px; margin: 0 auto"
+      ></main>
     </div>
-    <script src="script.js"></script>
+
+    <div
+      style="
+        position: fixed;
+        bottom: 25px;
+        right: 25px;
+        background: rgba(15, 23, 42, 0.85);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 8px 16px 8px 12px;
+        border-radius: 50px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        transition: transform 0.2s;
+      "
+    >
+      <div style="display: flex; align-items: center; gap: 6px">
+        <svg
+          width="16"
+          height="16"
+          fill="none"
+          stroke="var(--text-dim)"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+          <path
+            d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"
+          ></path>
+        </svg>
+        <span
+          id="volumeValueText"
+          style="
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--accent-cyan);
+            min-width: 32px;
+            text-align: right;
+          "
+          >100%</span
+        >
+      </div>
+
+      <input
+        type="range"
+        id="alarmVolumeSlider"
+        min="0"
+        max="1"
+        step="0.01"
+        value="1"
+        style="width: 80px; margin: 0; padding: 0; cursor: pointer"
+      />
+
+      <button
+        id="testAlarmBtn"
+        title="Test Suara"
+        style="
+          background: rgba(16, 185, 129, 0.15);
+          border: 1px solid var(--accent-emerald);
+          color: var(--accent-emerald);
+          border-radius: 50%;
+          width: 28px;
+          height: 28px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          padding: 0;
+          transition: all 0.2s;
+        "
+      >
+        <svg
+          width="12"
+          height="12"
+          fill="currentColor"
+          stroke="currentColor"
+          stroke-width="1"
+          viewBox="0 0 24 24"
+          style="margin-left: 2px"
+        >
+          <polygon points="5 3 19 12 5 21 5 3"></polygon>
+        </svg>
+      </button>
+    </div>
+    <script src="js/tracker.js"></script>
+    <script src="js/pity.js"></script>
+    <script src="js/app.js"></script>
   </body>
 </html>

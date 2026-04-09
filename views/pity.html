@@ -1,0 +1,123 @@
+<div class="card-glass pity-card">
+  <div
+    class="pity-display"
+    id="editPityBtn"
+    title="Klik untuk edit angka secara manual"
+    style="cursor: pointer; transition: transform 0.2s"
+  >
+    <span id="pityCounterText">0</span
+    ><span style="font-size: 16px; color: var(--text-dim)"> / 250</span>
+    <div
+      style="
+        font-size: 13px;
+        color: var(--accent-cyan);
+        margin-top: 10px;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+      "
+    >
+      📦 TOTAL CHEST DIBUKA:
+      <span id="chestsOpenedText" style="color: white">0</span>
+    </div>
+    <div
+      style="
+        font-size: 10px;
+        color: var(--text-dim);
+        margin-top: 8px;
+        font-weight: normal;
+      "
+    >
+      ✏️ Klik area ini untuk edit manual
+    </div>
+  </div>
+
+  <div
+    style="
+      text-align: center;
+      margin-bottom: 20px;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 10px;
+      border-radius: 8px;
+    "
+  >
+    <label
+      style="
+        font-size: 12px;
+        color: var(--text-main);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-weight: 600;
+      "
+    >
+      <input
+        type="checkbox"
+        id="hasTentacleCheck"
+        style="width: 16px; height: 16px; margin: 0; cursor: pointer"
+      />
+      Saya punya Dead Man's Tentacle di Inventory
+    </label>
+  </div>
+
+  <div class="progress-wrapper" style="margin-bottom: 20px">
+    <div
+      class="progress-track"
+      style="height: 12px; background: rgba(0, 0, 0, 0.3)"
+    >
+      <div
+        id="pityProgressBar"
+        class="progress-fill"
+        style="background: linear-gradient(90deg, #f59e0b, #f43f5e); width: 0%"
+      ></div>
+    </div>
+    <div class="progress-labels">
+      <span>0</span>
+      <span id="pityStatusLabel" class="marker" style="left: 50%"
+        >Mencari Loot...</span
+      >
+      <span>250 (Guaranteed)</span>
+    </div>
+  </div>
+
+  <div class="pity-grid">
+    <div class="pity-action-group">
+      <button
+        id="subNormalBtn"
+        class="btn-pity sub"
+        style="color: #3b82f6"
+        title="Kurangi 1"
+      >
+        -1
+      </button>
+      <button id="addNormalBtn" class="btn-pity normal" title="Tambah 1 Pity">
+        +1 NORMAL
+      </button>
+    </div>
+    <div class="pity-action-group">
+      <button
+        id="subMythicBtn"
+        class="btn-pity sub"
+        style="color: #a855f7"
+        title="Kurangi 10"
+      >
+        -10
+      </button>
+      <button id="addMythicBtn" class="btn-pity mythic" title="Tambah 10 Pity">
+        +1 MYTHIC (+10)
+      </button>
+    </div>
+  </div>
+
+  <div class="pity-divider">
+    Klik dibawah ini untuk Reset Pity (Jika Berhasil Dapat)
+  </div>
+
+  <div class="pity-grid">
+    <button id="resetAuricBtn" class="btn-pity success">AURIC ROD</button>
+    <button id="resetDeadmanBtn" class="btn-pity success">
+      Deadman Tentacle
+    </button>
+  </div>
+</div>
