@@ -1,6 +1,6 @@
 # Sunken Chest Spawn Tracker | Roblox Fisch 🏴‍☠️
 
-A specialized tool designed to track the spawn times and locations of **Sunken Chests** in the Roblox game **Fisch**. This project helps the community optimize their search for rare items and equipment efficiently.
+A specialized tool designed to track the spawn times and Server of **Sunken Chests** in the Roblox game **Fisch**. This project helps the community optimize their search for rare items and equipment efficiently.
 
 ## 📢 License & Usage
 
